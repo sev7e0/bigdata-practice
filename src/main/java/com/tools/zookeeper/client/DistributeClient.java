@@ -1,8 +1,6 @@
-package com.zookeeper.client;
+package com.tools.zookeeper.client;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.zookeeper.WatchedEvent;
