@@ -5,13 +5,31 @@
 	<groupId>com.sev7e0</groupId>
 	<artifactId>bigdata-practice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<properties>
 		<hadoop.version>2.7.5</hadoop.version>
 		<hbase.version>1.2.6</hbase.version>
 		<kafka.version>1.0.0</kafka.version>
+		<redis.verison>2.10.0</redis.verison>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${redis.verison}</version>
+		</dependency>
 		<!--Kafka依赖-->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
