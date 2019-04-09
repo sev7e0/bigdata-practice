@@ -22,6 +22,9 @@
 		<hbase.version>1.2.6</hbase.version>
 		<kafka.version>1.0.0</kafka.version>
 		<redis.verison>2.10.0</redis.verison>
+		<lombok.version>1.16.20</lombok.version>
+		<zookeeper.version>3.4.11</zookeeper.version>
+		<guava.version>24.0-jre</guava.version>
 	</properties>
 
 	<dependencies>
@@ -42,7 +45,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<!--hadoop依赖-->
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
@@ -65,7 +67,18 @@
 		<dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
-			<version>3.4.11</version>
+			<version>${zookeeper.version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+    </dependencies>
 </project>
