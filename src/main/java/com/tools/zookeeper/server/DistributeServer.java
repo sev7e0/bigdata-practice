@@ -43,19 +43,19 @@ public class DistributeServer {
 	* @return void      
 	* @throws
 	 */
-	public void regServer(String hostName) throws Exception, InterruptedException {
-		String creatPath = zk.create(parentNode + "/server", hostName.getBytes(), Ids.OPEN_ACL_UNSAFE,
-				CreateMode.EPHEMERAL_SEQUENTIAL);
-		System.out.println(hostName + "-------- is on line-----" + creatPath);
-	}
+		public void regServer(String hostName) throws Exception, InterruptedException {
+			String creatPath = zk.create(parentNode + "/server", hostName.getBytes(), Ids.OPEN_ACL_UNSAFE,
+					CreateMode.EPHEMERAL_SEQUENTIAL);
+			System.out.println(hostName + "-------- is on line-----" + creatPath);
+		}
 
-	public void handleService(String hostName) {
-		System.out.println(hostName + " start working");
-	}
+		public void handleService(String hostName) {
+			System.out.println(hostName + " start working");
+		}
 
-	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
-		DistributeServer distributeServer = new DistributeServer();
+		public static void main(String[] args) throws Exception {
+			// TODO Auto-generated method stub
+			DistributeServer distributeServer = new DistributeServer();
 
 		distributeServer.getConnect();
 
