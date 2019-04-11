@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoField;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,11 +26,12 @@ public class CacheTuning {
         System.out.println(jedis.ping());
         map.put("1", "a");
         map.put("2", "b");
+        map.put("3", "b");
 
 //        for (int i = 0; i < 1; i++) {
 //            threadPool.execute(() -> map.keySet().forEach(key -> System.out.printf(get(key))));
 //        }
-//        System.out.println(get("2"));
+        System.out.println(safeUpdateCache("3"));
 
         bloomFilter();
     }
@@ -70,7 +72,7 @@ public class CacheTuning {
     /**
      * 1.使用分布式互斥锁的方式 解决缓存中找不到对应值的问题
      */
-    private static String get(String key) {
+    private static String updateCache(String key) {
         String stop = "stop";
         String value = jedis.get(key);
         if (value == null) {
@@ -88,7 +90,38 @@ public class CacheTuning {
                     e.printStackTrace();
                 }
                 System.out.println("当前已被加锁，准备重试");
-                value = get(key);
+                value = updateCache(key);
+            }
+
+        }
+        return value;
+    }
+
+    /**
+     * 使用更好的锁方式实现，不推荐上边的加锁方式，存在线程不安全的问题
+     * @param key
+     * @return
+     */
+    private static String safeUpdateCache(String key) {
+        String stop = "stop";
+        String lockId = UUID.randomUUID().toString();
+        String value = jedis.get(key);
+        if (value == null) {
+            //redis分布式锁
+            if (DistributedTool.acquireDistributedLock(jedis, stop, lockId, Long.valueOf(180))) {
+                System.out.println("已获取到锁，正在更新缓存");
+                value = dbGet(key);
+                jedis.set(key, value);
+                System.out.println("缓存更新完成！！！");
+                DistributedTool.releaseDistributedLock(jedis, stop, lockId);
+            } else {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("当前已被加锁，准备重试");
+                value = safeUpdateCache(key);
             }
 
         }
