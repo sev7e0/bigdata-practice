@@ -147,9 +147,30 @@ hashtable实现hash使用的时字典进行保存键值对，字典的键保存�
 满足以上两点键会使用ziplist，反之将会转化为hashtable，不过量值不是固定的，可以通过
 配置文件进行修改，`hash-max-ziplist-value` and `hash-max-ziplist-entries`。
 
+#### 集合（Set）
 
+**常用命令**
 
+`OP key member [member ...]`
 
+| op | 注释 |
+|---|---|
+|SADD|向集合中添加一个元素，member已经存在则会被忽略，key不存在将会被创建
+|SISMEMBER|判断member是否为集合中的成员，是返回1其他情况返回0
+|SPOP|随机移除一个元素
+|SRANDMEMBER|只提供 key 参数时，返回随机一个元素；如果集合为空，返回nil，如果提供了count参数，那么返回一个数组；如果集合为空，返回空数组。
+|SREM|移除一个或者多个元素
+|SMOVE|原子性操作，移动原集合中的member到目标集合中，目标中存在这是单纯的将member移除。
+|SCARD|返回集合中的数量
+|SMEMBERS|返回结合中的所有成员
+|SINTER|返回一个集合的全部成员，该集合是所有给定集合的交集。不存在的 key 被视为空集。
+|SUNION|返回一个集合的全部成员，该集合是所有给定集合的并集。
+|SDIFF|返回一个集合的全部成员，该集合是所有给定集合之间的差集。
+|SDIFFSTORE|与SDIFF相识，但它将结果保存到 destination 集合，而不是简单地返回结果集。
+
+**实现方式**
+
+集合的底层实现是由intset和hashtable实现，
 
 
 [1]:http://zhangtielei.com/posts/blog-redis-quicklist.html
