@@ -26,10 +26,8 @@ public class DistributeServer {
 	 */
 
 	public void getConnect() throws Exception {
-		zk = new ZooKeeper(connectString, sessionTimeout, new Watcher() {
-			public void process(WatchedEvent event) {
+		zk = new ZooKeeper(connectString, sessionTimeout, event -> {
 
-			}
 		});
 	}
 
@@ -43,7 +41,7 @@ public class DistributeServer {
 	* @return void      
 	* @throws
 	 */
-		public void regServer(String hostName) throws Exception, InterruptedException {
+		public void regServer(String hostName) throws Exception {
 			String creatPath = zk.create(parentNode + "/server", hostName.getBytes(), Ids.OPEN_ACL_UNSAFE,
 					CreateMode.EPHEMERAL_SEQUENTIAL);
 			System.out.println(hostName + "-------- is on line-----" + creatPath);
