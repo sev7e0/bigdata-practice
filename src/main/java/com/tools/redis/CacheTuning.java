@@ -41,13 +41,13 @@ public class CacheTuning {
      */
     /**
      * 1.使用bloom filter进行拦截
-     *
+     * <p>
      * 有很多种方法可以有效地解决缓存穿透问题，最常见的则是采用布隆过滤器，将所有可能存在的数据哈希到一个足够大的bitmap中，一个一定不存在的数据会被 这个bitmap拦截掉，
      * 从而避免了对底层存储系统的查询压力。另外也有一个更为简单粗暴的方法（我们采用的就是这种），如果一个查询返回的数据为空（不管是数 据不存在，还是系统故障），
      * 我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。
      */
-    private static void bloomFilter(){
-        int size =  1000000;
+    private static void bloomFilter() {
+        int size = 1000000;
         BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size);
 
         for (int i = 0; i < size; i++) {
@@ -55,7 +55,7 @@ public class CacheTuning {
         }
 
         LocalTime before = LocalTime.now();
-        if (bloomFilter.mightContain(200099)){
+        if (bloomFilter.mightContain(200099)) {
             System.out.println("mightContain");
         }
         LocalTime now = LocalTime.now();
@@ -99,6 +99,7 @@ public class CacheTuning {
 
     /**
      * 使用更好的锁方式实现，不推荐上边的加锁方式，存在线程不安全的问题
+     *
      * @param key
      * @return
      */
@@ -140,7 +141,7 @@ public class CacheTuning {
         Long timeout = Long.valueOf(split[1]);
         if (timeout < LocalTime.now().getLong(ChronoField.NANO_OF_DAY)) {
             threadPool.execute(() -> {
-                if(jedis.setnx(stop,"1") == 1){
+                if (jedis.setnx(stop, "1") == 1) {
                     System.out.println("已获取到锁，正在更新缓存");
                     jedis.expire(stop, 3 * 60);
                     value.set(dbGet(key));

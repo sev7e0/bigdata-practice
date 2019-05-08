@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 public class QuickStartByLettuce {
     private static final Logger logger = LoggerFactory.getLogger(QuickStartByLettuce.class);
@@ -46,10 +45,6 @@ public class QuickStartByLettuce {
          * 当前链接失效时会自动重连，一直到close()被调用
          */
         connect.close();
-
-
-
-
 
 
         /**
@@ -101,8 +96,6 @@ public class QuickStartByLettuce {
          * 同步使用future，暂未完成
          * https://github.com/lettuce-io/lettuce-core/wiki/Asynchronous-API#synchronizing-futures
          */
-
-
 
 
         //关闭实例，释放线程和资源。
