@@ -1,5 +1,7 @@
 package com.tools.redis;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 import java.util.Collections;
@@ -10,6 +12,8 @@ import java.util.Collections;
  * redis集群情况下可以考虑使用redisson。
  */
 public class DistributedTool {
+
+    private static final Logger logger = LoggerFactory.getLogger(DistributedTool.class);
 
     private static final String LOCK_STATUS = "OK";
     /**
@@ -32,7 +36,7 @@ public class DistributedTool {
     public static Boolean acquireDistributedLock(Jedis jedis, String key, String lockId, Long time){
         String status = jedis.set(key, lockId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, time);
         if (LOCK_STATUS.equals(status)){
-            System.out.println("获取锁成功，当前："+key+"-"+lockId);
+            logger.info("获取锁成功，当前："+key+"-"+lockId);
             return true;
         }
         return false;
@@ -57,7 +61,7 @@ public class DistributedTool {
         //调用evel交给redis服务端执行脚本
         Object status = jedis.eval(luaScript, Collections.singletonList(key), Collections.singletonList(lockId));
         if (LOCK_STATUS.equals(status)){
-            System.out.println("释放锁成功，当前："+key+"-"+lockId);
+            logger.info("释放锁成功，当前："+key+"-"+lockId);
             return true;
         }
         return false;
