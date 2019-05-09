@@ -1,5 +1,6 @@
 package com.tools.redis;
 
+import io.lettuce.core.LettuceFutures;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -8,6 +9,8 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -17,7 +20,7 @@ public class QuickStartByLettuce {
 
     private final static String URI = "redis://localhost:6379/0";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         /**
          * 同步方式
@@ -45,6 +48,8 @@ public class QuickStartByLettuce {
          * 当前链接失效时会自动重连，一直到close()被调用
          */
         connect.close();
+
+
 
 
         /**
@@ -94,11 +99,63 @@ public class QuickStartByLettuce {
 
         /**
          * 同步使用future，暂未完成
-         * https://github.com/lettuce-io/lettuce-core/wiki/Asynchronous-API#synchronizing-futures
          */
+        List<RedisFuture<String>> futures = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            futures.add(asyncCommands.set("key-" + i, "value-" + i));
+        }
+        logger.info("代码不会等到某个命令完成后再发出另一个命令。同步是在发出所有命令之后完成的。");
+        LettuceFutures.awaitAll(1, TimeUnit.MINUTES, futures.toArray(new RedisFuture[futures.size()]));
+
+
+        logger.info("对单个futur也可以使用await");
+        RedisFuture<String> future = asyncCommands.get("key-0");
+        if(!future.await(1, TimeUnit.MINUTES)) {
+            System.out.println("在超时时间内未完成！");
+        }
+
+
+        logger.info("还有一种使用阻塞future的是采用循环的方式");
+        RedisFuture<String> future1 = asyncCommands.get("key-1");
+        while (!future1.isDone()){
+            logger.info("当前查询任务还未完成，继续阻塞");
+        }
+
+
+        /**
+         * 错误处理
+         */
+
+
+
 
 
         //关闭实例，释放线程和资源。
         redisClient.shutdown();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

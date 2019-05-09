@@ -189,20 +189,20 @@ hashtable实现hash使用的时字典进行保存键值对，字典的键保存�
 
 | op | 注释 |
 |---|---|
-ZADD | 将member及其score放入到有序key的集合中，如果某个 member 已经是有序集的成员，那么更新这个 member 的 score 值，并通过重新插入这个 member 元素，来保证该 member 在正确的位置上。
-ZSCORE | 返回有序集 key 中，成员 member 的 score 值。
-ZCARD | 返回有序集 key 的基数。
-ZCOUNT | 返回有序集 key 中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量。
-ZRANGE | 返回有序集 key 中，指定区间内的成员。
-ZREVRANGE | 返回有序集 key 中，指定区间内的成员，逆序排列。
-ZRANGEBYSCORE | 返回有序集 key 中，指定区间内的成员。
-ZREVRANGEBYSCORE | 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。有序集成员按 score 值逆序。
-ZRANK | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列。
-ZREVRANK | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值逆序。
-ZREM | 移除有序集 key 中的一个或多个成员，不存在的成员将被忽略。key存在但不是有序集合时将会报错
-ZREMRANGEBYRANK | 移除有序集 key 中范围内的成员，不存在的成员将被忽略。按照rank的排序
-ZREMRANGEBYSCORE | 移除有序集 key 中的范围内的成员，不存在的成员将被忽略。按照score排序
-ZUNIONSTORE | 交集，并将结果存储到新的有序集合中
+|ZADD | 将member及其score放入到有序key的集合中，如果某个 member 已经是有序集的成员，那么更新这个 member 的 score 值，并通过重新插入这个 member 元素，来保证该 member 在正确的位置上。
+|ZSCORE | 返回有序集 key 中，成员 member 的 score 值。
+|ZCARD | 返回有序集 key 的基数。
+|ZCOUNT | 返回有序集 key 中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量。
+|ZRANGE | 返回有序集 key 中，指定区间内的成员。
+|ZREVRANGE | 返回有序集 key 中，指定区间内的成员，逆序排列。
+|ZRANGEBYSCORE | 返回有序集 key 中，指定区间内的成员。
+|ZREVRANGEBYSCORE | 返回有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。有序集成员按 score 值逆序。
+|ZRANK | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列。
+|ZREVRANK | 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值逆序。
+|ZREM | 移除有序集 key 中的一个或多个成员，不存在的成员将被忽略。key存在但不是有序集合时将会报错
+|ZREMRANGEBYRANK | 移除有序集 key 中范围内的成员，不存在的成员将被忽略。按照rank的排序
+|ZREMRANGEBYSCORE | 移除有序集 key 中的范围内的成员，不存在的成员将被忽略。按照score排序
+|ZUNIONSTORE | 交集，并将结果存储到新的有序集合中
 
 **实现方式**
 
