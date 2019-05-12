@@ -9,11 +9,10 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.IntStream;
 
 public class QuickStartByLettuce {
     private static final Logger logger = LoggerFactory.getLogger(QuickStartByLettuce.class);
@@ -48,8 +47,6 @@ public class QuickStartByLettuce {
          * 当前链接失效时会自动重连，一直到close()被调用
          */
         connect.close();
-
-
 
 
         /**
@@ -100,62 +97,64 @@ public class QuickStartByLettuce {
         /**
          * 同步使用future，暂未完成
          */
-        List<RedisFuture<String>> futures = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            futures.add(asyncCommands.set("key-" + i, "value-" + i));
-        }
         logger.info("代码不会等到某个命令完成后再发出另一个命令。同步是在发出所有命令之后完成的。");
-        LettuceFutures.awaitAll(1, TimeUnit.MINUTES, futures.toArray(new RedisFuture[futures.size()]));
+        LettuceFutures.awaitAll(1, TimeUnit.MINUTES, IntStream.range(0, 10).mapToObj(i -> asyncCommands.set("key-" + i, "value-" + i)).toArray(RedisFuture[]::new));
 
 
         logger.info("对单个futur也可以使用await");
         RedisFuture<String> future = asyncCommands.get("key-0");
-        if(!future.await(1, TimeUnit.MINUTES)) {
+        if (!future.await(1, TimeUnit.MINUTES)) {
             System.out.println("在超时时间内未完成！");
         }
 
 
         logger.info("还有一种使用阻塞future的是采用循环的方式");
         RedisFuture<String> future1 = asyncCommands.get("key-1");
-        while (!future1.isDone()){
+        while (!future1.isDone()) {
             logger.info("当前查询任务还未完成，继续阻塞");
         }
 
 
         /**
          * 错误处理
+         *
+         * 1.返回默认值
+         * 2.使用备用的future
+         * 3.重试future
          */
 
+        //可以使用handle函数在出现异常时返回默认值
+        future1.handle((s, throwable) -> {
+            if (throwable != null) {
+                return "default value";
+            }
+            return s;
+        }).thenAccept(s -> logger.info("获取到的value为：{}", s));
 
 
+        //future支持可以根据不同的返回异常的类型，使用不同的默认值
+        future1.exceptionally(throwable -> {
+            if (throwable instanceof IllegalStateException) {
+                return "IllegalStateException";
+            } else if (throwable instanceof ExecutionException) {
+                return "ExecutionException";
+            }
+            return "default value";
+        }).thenAccept(s -> logger.info("当前返回值为：{}", s));
+
+
+        //
+        future1.whenComplete((s, throwable) -> {
+            if (throwable instanceof IllegalStateException) {
+                logger.error("异常为：{}", throwable.getMessage());
+            }
+        }).thenAccept(s -> logger.info("当前value：{}", s));
 
 
         //关闭实例，释放线程和资源。
         redisClient.shutdown();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
