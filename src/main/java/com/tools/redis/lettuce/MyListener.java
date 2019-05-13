@@ -1,4 +1,4 @@
-package com.tools.redis;
+package com.tools.redis.lettuce;
 
 import io.lettuce.core.pubsub.RedisPubSubListener;
 
