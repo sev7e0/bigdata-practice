@@ -17,13 +17,13 @@ public class LRUCache<K, V> {
     private CacheNode first;
     private CacheNode last;
     private Integer currentCacheSize;
-    private Integer cacheCapcity;
+    private Integer cacheCapacity;
     private HashMap<K, CacheNode> cache;
 
-    public LRUCache(Integer cacheCapcity) {
+    public LRUCache(Integer cacheCapacity) {
         this.currentCacheSize = 0;
-        this.cacheCapcity = cacheCapcity;
-        this.cache = new HashMap<K, CacheNode>(cacheCapcity);
+        this.cacheCapacity = cacheCapacity;
+        this.cache = new HashMap<>(cacheCapacity);
     }
 
     /**
@@ -36,7 +36,7 @@ public class LRUCache<K, V> {
         CacheNode node = cache.get(key);
         if (node == null) {
             //判断容量是否等于当前的size,是的话将会移除最后一个
-            if (Objects.equals(currentCacheSize, cacheCapcity)) {
+            if (Objects.equals(currentCacheSize, cacheCapacity)) {
                 cache.remove(key);
                 removeLast();
             }
@@ -74,7 +74,7 @@ public class LRUCache<K, V> {
         cache.clear();
         first = null;
         last = null;
-        cacheCapcity = 0;
+        cacheCapacity = 0;
     }
 
     /**
@@ -199,5 +199,7 @@ public class LRUCache<K, V> {
         System.out.println(lru.toString());
         lru.put(1, "aaa");  //1:aaa 5:e 2:bb
         System.out.println(lru.toString());
+        lru.clear();
+        System.out.println("-----"+lru.toString());
     }
 }
