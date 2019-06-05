@@ -1,4 +1,4 @@
-package com.tools.java;
+package com.tools.java.pattern;
 
 /**
  * 使用枚举类型实现单例模式

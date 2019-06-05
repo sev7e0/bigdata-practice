@@ -3,8 +3,6 @@ package com.tools.zookeeper.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 
 public class DistributeClient {
@@ -20,14 +18,12 @@ public class DistributeClient {
 	private volatile List<String> serverList = null;
 
 	public void getConnect() throws Exception {
-		zk = new ZooKeeper(connectString, sessionTimeout, new Watcher() {
-			public void process(WatchedEvent event) {
-				try {
-					getServerList();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		zk = new ZooKeeper(connectString, sessionTimeout, event -> {
+			try {
+				getServerList();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		});
 	}

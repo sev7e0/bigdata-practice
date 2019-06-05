@@ -1,7 +1,9 @@
-package com.tools.java;
+package com.tools.java.pattern;
 
 /**
  * 模版方法模式
+ * 什么是模版方法模式：
+ *      是类的行为模式，
  */
 public class TemplateMethodPattern {
     public static void main(String[] args) {

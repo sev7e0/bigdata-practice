@@ -13,6 +13,9 @@ public class MultipleInheritance{
         //将会调用方法签名参数为int的方法
         d2.hi(7777);
 
+        D3 c3 = new D3();
+        c3.hi("dd");
+        c3.hi(1);
 
         D4 d4 = new D4();
         d4.say();
@@ -96,6 +99,9 @@ interface C3 extends B3{
      * C3会继承B3的默认方法，把包含直接定义和覆盖
      * 父类的方法。同时隐式继承A3中的默认方法
      */
+}
+class D3 implements C3{
+
 }
 
 
