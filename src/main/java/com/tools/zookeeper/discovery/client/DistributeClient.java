@@ -1,4 +1,4 @@
-package com.tools.zookeeper.client;
+package com.tools.zookeeper.discovery.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.ZooKeeper;
@@ -22,6 +22,10 @@ public class DistributeClient {
 
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
 
+    /**
+     *  异步或者zookeeper链接，注意要使用CountDownLatch阻塞
+     * @throws Exception
+     */
     public void getConnect() throws Exception {
         zk = new ZooKeeper(connectString, sessionTimeout, event -> {
             try {
@@ -35,6 +39,11 @@ public class DistributeClient {
         countDownLatch.await();
     }
 
+
+    /**
+     * 获取服务列表
+     * @throws Exception
+     */
     public void getServerList() throws Exception {
         /**
          * 读取数据，可以获取到节点列表和节点数据，
@@ -67,6 +76,9 @@ public class DistributeClient {
         handlerService();
     }
 
+    /**
+     * 打印服务列表
+     */
     public void handlerService() {
         serverList.forEach(server -> log.info("当前在线服务有：{}", server));
     }

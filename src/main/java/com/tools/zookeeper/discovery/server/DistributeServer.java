@@ -1,4 +1,4 @@
-package com.tools.zookeeper.server;
+package com.tools.zookeeper.discovery.server;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
@@ -21,11 +21,7 @@ public class DistributeServer {
     private ZooKeeper zk = null;
 
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
-    /**
-     * 1.getconnect 2.regserver 3.service
-     *
-     * @throws IOException
-     */
+
 
     /**
      * 创建链接
@@ -63,11 +59,15 @@ public class DistributeServer {
         //支持异步创建，不支持递归创建，即不存在父节点的情况下不可以创建
         String creatPath = zk.create(parentNode + "/server", hostName.getBytes(), Ids.OPEN_ACL_UNSAFE,
                 CreateMode.EPHEMERAL_SEQUENTIAL);
-        System.out.println(hostName + "-------- is on line-----" + creatPath);
+        log.info("{}-------- is on line-----{}",hostName,creatPath);
     }
 
+    /**
+     *
+     * @param hostName
+     */
     public void handleService(String hostName) {
-        System.out.println(hostName + " start working");
+        log.info("{} start working",hostName);
     }
 
     public static void main(String[] args) throws Exception {
