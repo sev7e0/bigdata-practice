@@ -2,8 +2,33 @@ package com.tools.java.pattern;
 
 /**
  * 模版方法模式
+ *
  * 什么是模版方法模式：
- *      是类的行为模式，
+ *      是类的行为模式，定义一个算法骨架，而将一些步骤延迟到子类中实现，
+ *      模版方法使得子类可以不改变算法的结构，而重新定义该算法的具体实现。
+ *
+ * 适用性：
+ *      - 一次性实现一个算法不变的部分，改变的部分交给子类实现
+ *      - 控制子类拓展，只有允许子类实现的方法，子类才可以实现。
+ *      - 从所有子类中抽取公共方法，交给父类实现，减少代码重复。
+ *
+ * 所需角色：
+ *      AbstractClass 抽象类
+ *      ConcreteClass 具体类
+ *
+ * 效果：
+ *      模版方法是代码复用的基本技术，可以提取出类中的公有行为。
+ *      模版方法导致一种方向控制结构，这种结构有时被称为"好莱坞法则"，这里
+ *      指的是父类对子类操作的调用。
+ *
+ * 实现：
+ *      参考下方实现。
+ *
+ * 已知应用：
+ *      Set，AbstractSet，HashSet
+ *
+ * 相关模式：
+ *      Factory Method、Strategy等模式。
  */
 public class TemplateMethodPattern {
     public static void main(String[] args) {
@@ -29,7 +54,7 @@ interface Computer{
 
 abstract class AbstractComputer implements Computer{
 
-    public void startComputer(){
+    protected void startComputer(){
         power();
         mainBoard();
         cpu();
@@ -38,17 +63,26 @@ abstract class AbstractComputer implements Computer{
 
     }
 
+    /**
+     * final禁止被重新定义
+     */
     public final void power(){
         System.out.println("开始供电");
     }
 
+    /**
+     * 抽象操作必须被重新定义
+     */
     public abstract void mainBoard();
 
     public abstract void cpu();
 
     public abstract void hardDisk();
 
-    public final void display(){
+    /**
+     * hook函数可以被重新定义
+     */
+    public void display(){
         System.out.println("已启动");
     }
 }
@@ -91,4 +125,8 @@ class IPad extends AbstractComputer implements Computer{
         System.out.println("IPad开始为硬盘供电");
     }
 
+    @Override
+    public void display() {
+        System.out.println("IPad已经完全启动！");
+    }
 }
