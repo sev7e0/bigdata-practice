@@ -5,7 +5,6 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 
-import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 @Slf4j
@@ -25,11 +24,12 @@ public class DistributeServer {
 
     /**
      * 创建链接
+     *
      * @throws Exception
      */
     public void getConnect() throws Exception {
         zk = new ZooKeeper(connectString, sessionTimeout, event -> {
-            log.info("链接状态更改----"+event.getState());
+            log.info("链接状态更改----" + event.getState());
             countDownLatch.countDown();
         });
         /**
@@ -40,8 +40,8 @@ public class DistributeServer {
          */
         countDownLatch.await();
         //根据两个能够确定一个会话，可以实现客户端会话复用
-        log.info("sessionId为：{}",zk.getSessionId());
-        log.info("会话密钥为：{}",zk.getSessionPasswd());
+        log.info("sessionId为：{}", zk.getSessionId());
+        log.info("会话密钥为：{}", zk.getSessionPasswd());
 
 
     }
@@ -58,16 +58,15 @@ public class DistributeServer {
     public void regServer(String hostName) throws Exception {
         //支持异步创建，不支持递归创建，即不存在父节点的情况下不可以创建
         String creatPath = zk.create(parentNode + "/server", hostName.getBytes(), Ids.OPEN_ACL_UNSAFE,
-                CreateMode.EPHEMERAL_SEQUENTIAL);
-        log.info("{}-------- is on line-----{}",hostName,creatPath);
+                CreateMode.EPHEMERAL);
+        log.info("{}-------- is on line-----{}", hostName, creatPath);
     }
 
     /**
-     *
      * @param hostName
      */
     public void handleService(String hostName) {
-        log.info("{} start working",hostName);
+        log.info("{} start working", hostName);
     }
 
     public static void main(String[] args) throws Exception {

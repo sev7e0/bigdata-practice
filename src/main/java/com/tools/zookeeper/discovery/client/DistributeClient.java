@@ -23,7 +23,8 @@ public class DistributeClient {
     private static CountDownLatch countDownLatch = new CountDownLatch(1);
 
     /**
-     *  异步或者zookeeper链接，注意要使用CountDownLatch阻塞
+     * 异步或者zookeeper链接，注意要使用CountDownLatch阻塞
+     *
      * @throws Exception
      */
     public void getConnect() throws Exception {
@@ -42,6 +43,7 @@ public class DistributeClient {
 
     /**
      * 获取服务列表
+     *
      * @throws Exception
      */
     public void getServerList() throws Exception {
@@ -55,6 +57,8 @@ public class DistributeClient {
                  * 支持自定义Watch，在节点变更时会发送NodeChildrenChanged事件
                  * 不过Watch仅一次有效
                  */
+                log.debug(event.getType().toString());
+                log.debug(event.getState().toString());
                 log.info("此刻有节点变更事件产生！");
                 getServerList();
             } catch (Exception e) {
@@ -69,6 +73,7 @@ public class DistributeClient {
              * 可以根据路径，获取节点中保存的数据，同样getChildren支持Watch注册
              * 在节点数据发生变化时，可以发送事件。NodeDataChanged
              */
+            log.info("服务节点路径为：{}",child);
             byte[] data = zk.getData(parentNode + "/" + child, false, null);
             list.add(new String(data));
         }
@@ -80,6 +85,10 @@ public class DistributeClient {
      * 打印服务列表
      */
     public void handlerService() {
+        if (serverList.size() < 1) {
+            log.info("当前无可用节点");
+            return;
+        }
         serverList.forEach(server -> log.info("当前在线服务有：{}", server));
     }
 
