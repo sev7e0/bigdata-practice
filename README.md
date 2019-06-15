@@ -4,6 +4,9 @@
 
 ### Kafka Practice
 
+- [生产者/消费者QuickStart](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/kafka)
+
+
 ### Redis Practice
 
 - [缓存击穿，缓存穿透，缓存雪崩的解决方案](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/redis)
