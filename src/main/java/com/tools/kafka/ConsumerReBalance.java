@@ -30,6 +30,9 @@ public class ConsumerReBalance {
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        //添加自定义消费者拦截器，可以使用多个拦截器构成拦截链
+        //当某个拦截器失败时，下一个会自动从上一个成功后的拦截器开始拦截
+        properties.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, ConsumerInterceptorTTL.class.getName());
 
         //关闭kafka默认的自动提交offset，容易导致重复处理的问题
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
