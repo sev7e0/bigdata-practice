@@ -18,7 +18,7 @@ import java.util.Properties;
  * 全部配置的情况下执行顺序为 生产者拦截器 -> 序列化器 -> 分区器
  */
 public class ProducerQuickStart {
-    public static final String brokerList = "spark01:9092,spark02:9092,spark02:9092";
+    public static final String brokerList = "localhost:9092";
     public static final String topic = "topic-1";
 
     /**

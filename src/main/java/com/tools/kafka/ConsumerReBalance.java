@@ -1,23 +1,21 @@
 package com.tools.kafka;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 /**
- * 手动控制提交offset
+ * ReBalance监听器的用法，如何做到减少重复消费。
  */
 @Slf4j
-public class ConsumerCommitOffset {
+public class ConsumerReBalance {
     public static final String brokerList = "localhost:9092";
     public static final String topic = "topic-1";
     //新的group，相较于ConsumerQuickStart group-1分组，现在kafka是发布订阅模型
-    public static final String groupId = "group-2";
+    public static final String groupId = "group-3";
     public static final String out = "topic={} - partition={} - offset={} - value={}";
 
     /**
@@ -43,21 +41,39 @@ public class ConsumerCommitOffset {
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(initProperties());
 
-        consumer.subscribe(Collections.singletonList(topic));
+        Map<TopicPartition, OffsetAndMetadata> map = new HashMap<>();
+        consumer.subscribe(Collections.singletonList(topic), new ConsumerRebalanceListener() {
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> collection) {
+                //同步提交
+                consumer.commitSync(map);
+                //亦可以选择存储到DB中。
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> collection) {
+
+            }
+        });
 
         try {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                records.forEach(record ->
-                        log.info(out,
-                                record.topic(),
-                                record.partition(),
-                                record.offset(),
-                                record.value()));
+                records.forEach(record -> {
+                            log.info(out,
+                                    record.topic(),
+                                    record.partition(),
+                                    record.offset(),
+                                    record.value());
+                            ///将offset存储到局部变量中，在ReBalance发生前，能够同步的提交offset避免重复消费
+                            map.put(new TopicPartition(record.topic(), record.partition()),
+                                    new OffsetAndMetadata(record.offset() + 1));
+                        }
+                );
                 //异步提交offset
-                consumer.commitAsync();
+                consumer.commitAsync(map, null);
             }
-        }finally {
+        } finally {
             //使用同步提交，做最后的把关
             consumer.commitSync();
             consumer.close();
