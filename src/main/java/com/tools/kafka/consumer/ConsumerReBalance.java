@@ -1,8 +1,9 @@
-package com.tools.kafka;
+package com.tools.kafka.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.*;
@@ -26,8 +27,8 @@ public class ConsumerReBalance {
     private static Properties initProperties() {
         Properties properties = new Properties();
 
-        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
-        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         //添加自定义消费者拦截器，可以使用多个拦截器构成拦截链

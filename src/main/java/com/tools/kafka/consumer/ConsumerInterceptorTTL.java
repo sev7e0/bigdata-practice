@@ -1,4 +1,4 @@
-package com.tools.kafka;
+package com.tools.kafka.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerInterceptor;

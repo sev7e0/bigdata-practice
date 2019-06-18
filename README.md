@@ -5,7 +5,9 @@
 ### Kafka Practice
 
 - [生产者/消费者QuickStart](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/kafka)
-
+- [自定义消费者消息过期拦截器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/kafka/consumer/ConsumerInterceptorTTL.java)
+- [Kafka ReBalance监听器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/kafka/consumer/ConsumerReBalance.java)
+- [Kafka 消费者多线程消费](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/kafka/consumer/ConsumerThread.java)
 
 ### Redis Practice
 
