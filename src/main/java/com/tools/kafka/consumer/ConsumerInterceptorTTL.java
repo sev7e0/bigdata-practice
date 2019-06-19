@@ -14,11 +14,11 @@ import java.util.Map;
 
 /**
  * 自定义消费者拦截器
- *
+ * <p>
  * 实现消息过期时间的功能
  */
 @Slf4j
-public class ConsumerInterceptorTTL  implements ConsumerInterceptor<String, String> {
+public class ConsumerInterceptorTTL implements ConsumerInterceptor<String, String> {
     @Override
     public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
         long timeMillis = System.currentTimeMillis();
@@ -29,13 +29,13 @@ public class ConsumerInterceptorTTL  implements ConsumerInterceptor<String, Stri
             List<ConsumerRecord<String, String>> recordList = consumerRecords.records(topicPartition);
             List<ConsumerRecord<String, String>> newConsumerRecords = new ArrayList<>();
 
-            recordList.forEach(record->{
-                if (timeMillis-record.timestamp() < 10*1000){
+            recordList.forEach(record -> {
+                if (timeMillis - record.timestamp() < 10 * 1000) {
                     newConsumerRecords.add(record);
                 }
             });
-            if (!newConsumerRecords.isEmpty()){
-                map.put(topicPartition,newConsumerRecords);
+            if (!newConsumerRecords.isEmpty()) {
+                map.put(topicPartition, newConsumerRecords);
             }
         });
         return new ConsumerRecords<>(map);
@@ -48,7 +48,7 @@ public class ConsumerInterceptorTTL  implements ConsumerInterceptor<String, Stri
 
     @Override
     public void onCommit(Map<TopicPartition, OffsetAndMetadata> map) {
-        map.forEach((tp,offset)-> log.info("tp:{}--offset:{}",tp,offset.offset()));
+        map.forEach((tp, offset) -> log.info("tp:{}--offset:{}", tp, offset.offset()));
     }
 
     @Override

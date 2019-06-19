@@ -58,7 +58,7 @@ public class ConsumerCommitOffset {
                 //异步提交offset
                 consumer.commitAsync();
             }
-        }finally {
+        } finally {
             //使用同步提交，做最后的把关
             consumer.commitSync();
             consumer.close();

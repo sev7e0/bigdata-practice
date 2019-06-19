@@ -18,10 +18,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 客户端消费 多线程方式实现，未完待续
+ * 客户端消费 多线程方式实现
  */
 @Slf4j
-public class ConsumerThread extends Thread{
+public class ConsumerThread extends Thread {
     private KafkaConsumer<String, String> kafkaConsumer;
 
     private ExecutorService executorService;
@@ -46,46 +46,52 @@ public class ConsumerThread extends Thread{
     @Override
     public void run() {
         try {
-            while (true){
+            while (true) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(100));
 
-                if (!records.isEmpty()){
+                if (!records.isEmpty()) {
                     executorService.submit(new RecordHandler(records));
                 }
+                synchronized (RecordHandler.offsets) {
+                    if (!RecordHandler.offsets.isEmpty()) {
+                        kafkaConsumer.commitSync(RecordHandler.offsets, null);
+                        RecordHandler.offsets.clear();
+                    }
+                }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
-        }finally {
+        } finally {
             kafkaConsumer.close();
         }
 
     }
 }
 
-class RecordHandler extends Thread{
+class RecordHandler extends Thread {
     private ConsumerRecords<String, String> records;
 
-    private Map<TopicPartition, OffsetAndMetadata> offsets;
+    public static Map<TopicPartition, OffsetAndMetadata> offsets;
 
-    public RecordHandler(ConsumerRecords records){
+    public RecordHandler(ConsumerRecords records) {
         this.records = records;
     }
 
     @Override
     public void run() {
         records.partitions()
-                .forEach(partition->{
+                .forEach(partition -> {
                     List<ConsumerRecord<String, String>> record = records.records(partition);
 
                     long lastConsumerOffset = record.get(record.size() - 1).offset();
 
-                    synchronized (offsets){
-                        if (!offsets.containsKey(partition)){
+                    synchronized (offsets) {
+                        if (!offsets.containsKey(partition)) {
                             offsets.put(partition, new OffsetAndMetadata(lastConsumerOffset + 1));
-                        }else {
+                        } else {
                             long position = offsets.get(partition).offset();
-                            if (position <lastConsumerOffset+1){
-                                offsets.put(partition, new OffsetAndMetadata(lastConsumerOffset+ 1));
+                            if (position < lastConsumerOffset + 1) {
+                                offsets.put(partition, new OffsetAndMetadata(lastConsumerOffset + 1));
                             }
                         }
                     }
