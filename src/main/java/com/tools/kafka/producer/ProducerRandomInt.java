@@ -1,25 +1,21 @@
-package com.tools.kafka.quickstart;
+package com.tools.kafka.producer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
+import java.util.Random;
 
 /**
- * kafka生产者。
- *
- * 主要三大组件：
- * - 序列化器 -> 必须配置
- * - 分区器 -> 选配
- * - 生产者拦截器 -> 选配
- *
- * 全部配置的情况下执行顺序为 生产者拦截器 -> 序列化器 -> 分区器
+ * 向kafka中发送随机数
  */
-public class ProducerQuickStart {
+@Slf4j
+public class ProducerRandomInt {
     public static final String brokerList = "localhost:9092";
-    public static final String topic = "ProducerQuickStart";
+    public static final String topic = "randomCount";
 
     /**
      * 初始化参数
@@ -31,33 +27,26 @@ public class ProducerQuickStart {
 
         //生产者需要序列化器将对象转换成字节数组才能通过网络发送给kafka服务端
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-//        properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        //properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
-
         return properties;
     }
 
     public static void main(String[] args) throws InterruptedException {
+        Properties properties = initProperties();
 
-        //构建producer实例。
-        KafkaProducer<String, String> producer = new KafkaProducer<>(initProperties());
-
-        for (int i = 100; i < 1000; i++) {
-
-            //构建消息实例ProducerRecord
-            ProducerRecord<String, String> record = new ProducerRecord<>(topic, "hello kafka-" + i);
-
-            //消息发送
+        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+        Random random = new Random(10);
+        for (int i = 0; i < 1000; i++) {
+            String value = String.valueOf(random.nextInt(10));
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, value);
             producer.send(record);
-
-            Thread.sleep(5000);
+            log.info("已发送：{}条, value为: {}", i, value);
+            Thread.sleep(1000);
         }
-
-
         producer.close();
     }
 
 }
-

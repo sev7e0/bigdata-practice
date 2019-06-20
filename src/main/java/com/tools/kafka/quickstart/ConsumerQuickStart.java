@@ -12,7 +12,7 @@ import java.util.Properties;
 @Slf4j
 public class ConsumerQuickStart {
     public static final String brokerList = "localhost:9092";
-    public static final String topic = "topic-1";
+    public static final String topic = "ProducerQuickStart";
     public static final String groupId = "group-1";
     public static final String out = "topic={} - partition={} - offset={} - value={}";
 
