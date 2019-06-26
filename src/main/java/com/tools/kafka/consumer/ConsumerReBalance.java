@@ -43,47 +43,45 @@ public class ConsumerReBalance {
 
     public static void main(String[] args) {
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(initProperties());
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(initProperties())) {
+            Map<TopicPartition, OffsetAndMetadata> map = new HashMap<>();
+            consumer.subscribe(Collections.singletonList(topic), new ConsumerRebalanceListener() {
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> collection) {
+                    //同步提交
+                    consumer.commitSync(map);
+                    //亦可以选择存储到DB中。
+                }
 
-        Map<TopicPartition, OffsetAndMetadata> map = new HashMap<>();
-        consumer.subscribe(Collections.singletonList(topic), new ConsumerRebalanceListener() {
-            @Override
-            public void onPartitionsRevoked(Collection<TopicPartition> collection) {
-                //同步提交
-                consumer.commitSync(map);
-                //亦可以选择存储到DB中。
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> collection) {
+
+                }
+            });
+
+            try {
+                while (true) {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    records.forEach(record -> {
+                                log.info(out,
+                                        record.topic(),
+                                        record.partition(),
+                                        record.offset(),
+                                        record.value());
+                                ///将offset存储到局部变量中，在ReBalance发生前，能够同步的提交offset避免重复消费
+                                map.put(new TopicPartition(record.topic(), record.partition()),
+                                        new OffsetAndMetadata(record.offset() + 1));
+                            }
+                    );
+                    //异步提交offset
+                    consumer.commitAsync(map, null);
+                }
+            } finally {
+                //使用同步提交，做最后的把关
+                consumer.commitSync();
             }
 
-            @Override
-            public void onPartitionsAssigned(Collection<TopicPartition> collection) {
-
-            }
-        });
-
-        try {
-            while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                records.forEach(record -> {
-                            log.info(out,
-                                    record.topic(),
-                                    record.partition(),
-                                    record.offset(),
-                                    record.value());
-                            ///将offset存储到局部变量中，在ReBalance发生前，能够同步的提交offset避免重复消费
-                            map.put(new TopicPartition(record.topic(), record.partition()),
-                                    new OffsetAndMetadata(record.offset() + 1));
-                        }
-                );
-                //异步提交offset
-                consumer.commitAsync(map, null);
-            }
-        } finally {
-            //使用同步提交，做最后的把关
-            consumer.commitSync();
-            consumer.close();
         }
-
-
     }
 
 }

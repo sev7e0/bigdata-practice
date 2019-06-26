@@ -26,7 +26,7 @@
 		<zookeeper.version>3.4.11</zookeeper.version>
 		<guava.version>24.0-jre</guava.version>
 		<lettuce.version>5.1.6.RELEASE</lettuce.version>
-		<slf4j.version>1.7.21</slf4j.version>
+		<slf4j.version>1.7.20</slf4j.version>
 		<pulsar.version>2.3.2</pulsar.version>
 	</properties>
 

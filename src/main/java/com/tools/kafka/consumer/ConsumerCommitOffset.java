@@ -42,29 +42,26 @@ public class ConsumerCommitOffset {
 
     public static void main(String[] args) {
 
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(initProperties());
-
-        consumer.subscribe(Collections.singletonList(topic));
-
-        try {
-            while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                records.forEach(record ->
-                        log.info(out,
-                                record.topic(),
-                                record.partition(),
-                                record.offset(),
-                                record.value()));
-                //异步提交offset
-                consumer.commitAsync();
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(initProperties())) {
+            consumer.subscribe(Collections.singletonList(topic));
+            try {
+                while (true) {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    records.forEach(record ->
+                            log.info(out,
+                                    record.topic(),
+                                    record.partition(),
+                                    record.offset(),
+                                    record.value()));
+                    //异步提交offset
+                    consumer.commitAsync();
+                }
+            } finally {
+                //使用同步提交，做最后的把关
+                consumer.commitSync();
             }
-        } finally {
-            //使用同步提交，做最后的把关
-            consumer.commitSync();
-            consumer.close();
+
         }
-
-
     }
 
 }
