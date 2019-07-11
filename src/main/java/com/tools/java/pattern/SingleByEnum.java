@@ -7,25 +7,27 @@ package com.tools.java.pattern;
 public enum SingleByEnum {
     INSTANCE;
     private Resource instance;
+
     SingleByEnum() {
         instance = new Resource();
     }
+
     public Resource getInstance() {
         return instance;
     }
-    class Resource{
+
+    class Resource {
         private Resource() {
         }
 
-        public void prit(){
+        public void prit() {
             System.out.println("get resource instance");
         }
     }
 }
 
 
-
-class eme{
+class eme {
 
     public static void main(String[] args) {
         SingleByEnum.Resource resource = SingleByEnum.INSTANCE.getInstance();

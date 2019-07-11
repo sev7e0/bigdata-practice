@@ -29,7 +29,7 @@ public class DistributeServer {
      */
     public void getConnect() throws Exception {
         zk = new ZooKeeper(connectString, sessionTimeout, event -> {
-            log.info("链接状态更改----" + event.getState());
+            log.info("链接状态更改----{}", event.getState());
             countDownLatch.countDown();
         });
         /**
