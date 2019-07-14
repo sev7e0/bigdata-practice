@@ -29,44 +29,48 @@ package com.tools.java.pattern;
  *
  * 相关模式：
  *      Factory Method、Strategy等模式。
+ *
+ * http://blog.sev7e0.site/article/59#comment-box
  */
 public class TemplateMethodPattern {
     public static void main(String[] args) {
         MacBook macBook = new MacBook();
         IPad iPad = new IPad();
         macBook.startComputer();
+        System.out.println("-----------");
+        iPad.setDisplay(false);
         iPad.startComputer();
+        /**
+         * 开始供电
+         * MacBook启动主板
+         * MacBook开始为CPU供电
+         * MacBook开始为硬盘供电
+         * MacBook屏幕点亮
+         * -----------
+         * 用户要求 iPad 屏幕不点亮
+         * 开始供电
+         * IPad启动主板
+         * IPad开始为CPU供电
+         * IPad开始为硬盘供电
+         */
     }
 }
 
-interface Computer{
-
-    void power();
-
-    void mainBoard();
-
-    void cpu();
-
-    void hardDisk();
-
-    void display();
-}
-
-abstract class AbstractComputer implements Computer{
-
-    protected void startComputer(){
+abstract class AbstractComputer {
+    /**
+     * final禁止被重新定义
+     */
+    final protected void startComputer(){
         power();
         mainBoard();
         cpu();
         hardDisk();
-        display();
-
+        if(isDisplay()){
+            display();
+        }
     }
 
-    /**
-     * final禁止被重新定义
-     */
-    public final void power(){
+    final public void power(){
         System.out.println("开始供电");
     }
 
@@ -79,15 +83,16 @@ abstract class AbstractComputer implements Computer{
 
     public abstract void hardDisk();
 
+    public abstract void display();
     /**
-     * hook函数可以被重新定义
+     * hook函数可以被重新定义,默认返回 true，所有设备都开启显示
      */
-    public void display(){
-        System.out.println("已启动");
+    public boolean isDisplay(){
+        return true;
     }
 }
 
-class MacBook extends AbstractComputer implements Computer{
+class MacBook extends AbstractComputer{
 
 
     @Override
@@ -105,11 +110,15 @@ class MacBook extends AbstractComputer implements Computer{
         System.out.println("MacBook开始为硬盘供电");
     }
 
+    @Override
+    public void display() {
+        System.out.println("MacBook屏幕点亮");
+    }
 }
 
-class IPad extends AbstractComputer implements Computer{
+class IPad extends AbstractComputer{
 
-
+    private boolean flag = true;
     @Override
     public void mainBoard() {
         System.out.println("IPad启动主板");
@@ -127,6 +136,20 @@ class IPad extends AbstractComputer implements Computer{
 
     @Override
     public void display() {
-        System.out.println("IPad已经完全启动！");
+        System.out.println("IPad屏幕点亮！");
+    }
+
+    @Override
+    public boolean isDisplay(){
+        return this.flag;
+    }
+    /**
+     * 用户自定义是否点亮屏幕
+     */
+    public void setDisplay(boolean userFlag){
+        if (!userFlag){
+            System.out.println("用户要求 iPad 屏幕不点亮");
+        }
+        this.flag = userFlag;
     }
 }
