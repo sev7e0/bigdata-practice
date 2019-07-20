@@ -62,12 +62,12 @@ class FuShiKang implements ProductionIPhone{
 
     @Override
     public void productionBattery() {
-        System.out.println("FuShiKang production the iphong battery");
+        System.out.println("FuShiKang production the iphone battery");
     }
 
     @Override
     public void productionScreen() {
-        System.out.println("FuShiKang production the iphong screen");
+        System.out.println("FuShiKang production the iphone screen");
     }
 }
 
@@ -100,7 +100,7 @@ class Decorator01 extends FuShiKangDecorator{
     }
 
     public void productionCharger(){
-        System.out.println("FuShiKang production the iphong Charger too");
+        System.out.println("FuShiKang production the iphone Charger too");
     }
 
 
