@@ -24,7 +24,7 @@
 		<redis.verison>2.10.0</redis.verison>
 		<lombok.version>1.16.20</lombok.version>
 		<zookeeper.version>3.4.11</zookeeper.version>
-		<guava.version>24.0-jre</guava.version>
+		<guava.version>16.0</guava.version>
 		<lettuce.version>5.1.6.RELEASE</lettuce.version>
 		<slf4j.version>1.7.20</slf4j.version>
 		<pulsar.version>2.3.2</pulsar.version>
