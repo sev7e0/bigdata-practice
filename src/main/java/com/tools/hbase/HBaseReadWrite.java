@@ -10,18 +10,21 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
-public class ReadWrite {
-
-    private Configuration configuration = null;
+public class HBaseReadWrite {
 
     private Connection connection = null;
 
     public static void main(String[] args) throws IOException {
-        ReadWrite readWrite = new ReadWrite();
+        HBaseReadWrite readWrite = new HBaseReadWrite();
         readWrite.init();
-        readWrite.creatTable("table0814", "family0814");
-        readWrite.insert("table0814", "11", "family0814", "time_str", "data0814");
-        readWrite.scan("table0814", "family0814", "time_str");
+        readWrite.creatTable();
+        for (int i = 0; i < 10000; i++) {
+            long stamp = System.currentTimeMillis();
+            String data = "data_"+stamp;
+            readWrite.insert(HBaseTestUtil.getTableName(), String.valueOf(stamp), HBaseTestUtil.getFamilyName(), "data_stamp".getBytes(), data);
+        }
+
+        readWrite.scan(HBaseTestUtil.getTableName(), HBaseTestUtil.getFamilyName(), "data_stamp");
     }
 
     /**
@@ -30,7 +33,7 @@ public class ReadWrite {
      * @throws IOException
      */
     private void init() throws IOException {
-        configuration = HBaseConfiguration.create();
+        Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.quorum", "localhost");
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
         connection = ConnectionFactory.createConnection(configuration);
@@ -39,20 +42,18 @@ public class ReadWrite {
     /**
      * 创建表
      *
-     * @param tableN  表名
-     * @param familyN 列族
      * @throws IOException
      */
-    private void creatTable(String tableN, String familyN) throws IOException {
+    private void creatTable() throws IOException {
         Admin admin = connection.getAdmin();
-        TableName tableName = TableName.valueOf(tableN);
+        TableName tableName = TableName.valueOf(HBaseTestUtil.getTableName());
         if (admin.tableExists(tableName)) {
             // hbase 在删除表之前要先 disable
             admin.disableTable(tableName);
             admin.deleteTable(tableName);
         }
         HTableDescriptor descriptor = new HTableDescriptor(tableName);
-        descriptor.addFamily(new HColumnDescriptor(Bytes.toBytes(familyN)));
+        descriptor.addFamily(new HColumnDescriptor(HBaseTestUtil.getFamilyName()));
         admin.createTable(descriptor);
     }
 
@@ -66,12 +67,11 @@ public class ReadWrite {
      * @param value      数据
      * @throws IOException
      */
-    private void insert(String tableN, String rowId, String familyName, String qualifier, String value) throws IOException {
+    private void insert(byte[] tableN, String rowId, byte[] familyName, byte[] qualifier, String value) throws IOException {
         TableName tableName = TableName.valueOf(tableN);
         Table table = connection.getTable(tableName);
-        Put put = new Put(Bytes.toBytes(rowId));
-        put.addColumn(familyName.getBytes(), qualifier.getBytes(), value.getBytes())
-                .addColumn(familyName.getBytes(), qualifier.getBytes(), value.getBytes());
+        Put put = new Put(rowId.getBytes());
+        put.addColumn(familyName, qualifier, value.getBytes());
         table.put(put);
     }
 
@@ -81,11 +81,11 @@ public class ReadWrite {
      * @param qualifier 列
      * @throws IOException
      */
-    private void scan(String tableN, String familyN, String qualifier) throws IOException {
+    private void scan(byte[] tableN, byte[] familyN, String qualifier) throws IOException {
         TableName tableName = TableName.valueOf(tableN);
         Table table = connection.getTable(tableName);
         Scan scan = new Scan();
         ResultScanner scanner = table.getScanner(scan);
-        scanner.forEach(data -> System.out.println((Bytes.toString(data.getValue(familyN.getBytes(), qualifier.getBytes())))));
+        scanner.forEach(data -> System.out.println((Bytes.toString(data.getValue(familyN, qualifier.getBytes())))));
     }
 }
