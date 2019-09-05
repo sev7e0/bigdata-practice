@@ -14,83 +14,71 @@ import java.util.Objects;
 @Slf4j
 public class ZkElectionUtil {
     private static final String CONNECTSTRING = "localhost:2181";
-    private static final int SESSIONTIMEOUT = 200;
-    private static final String PARENTNODE = "/rootNode";
-    private static final String LOCKNODE = PARENTNODE+"/lock";
-
+    private static final int SESSIONTIMEOUT = 2000;
+    private static final String LOCKNODE = "/rootNode/lock";
+    private static final CuratorFramework client;
+    // 初始化客户端
+    static {
+        ExponentialBackoffRetry exponentialBackoffRetry = new ExponentialBackoffRetry(SESSIONTIMEOUT, 3);
+        client = CuratorFrameworkFactory.newClient(CONNECTSTRING, exponentialBackoffRetry);
+        client.start();
+    }
 
     /**
-     * 获取连接
+     * 创建节点
+     * @param data
      * @return
      */
-    public static CuratorFramework getConnect(){
-
-        ExponentialBackoffRetry exponentialBackoffRetry = new ExponentialBackoffRetry(SESSIONTIMEOUT, 3);
-
-        CuratorFramework client = CuratorFrameworkFactory.newClient(CONNECTSTRING, exponentialBackoffRetry);
-
-        client.start();
-
-        return client;
-    }
-
-    /**
-     * 确保root节点一定存在
-     * @param client
-     */
-    private static void ensureRootPath(CuratorFramework client){
-        try {
-            Stat stat = client.checkExists().forPath(PARENTNODE);
-            if (Objects.isNull(stat)){
-                client.create()
-                        .withMode(CreateMode.PERSISTENT)
-                        .forPath(PARENTNODE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static boolean createLocalPath(CuratorFramework client, byte[] data){
+    private static boolean createLocalPath(byte[] data) {
         try {
             Stat stat = client.checkExists().forPath(LOCKNODE);
-            if (Objects.isNull(stat)){
+            if (Objects.isNull(stat)) {
                 client.create()
+                        .creatingParentContainersIfNeeded()
                         .withMode(CreateMode.EPHEMERAL)
-                        .forPath(LOCKNODE);
-            }else {
+                        .forPath(LOCKNODE, data);
+            } else {
                 return false;
             }
         } catch (Exception e) {
-            log.error("create node path fail,reason: {}", e.getMessage());
+            log.warn("create node path fail, reason: {}", e.getMessage());
             return false;
         }
         return true;
     }
 
-    public static void electionMaster(CuratorFramework client, byte[] data) throws Exception {
-        ensureRootPath(client);
-        boolean res = createLocalPath(client, data);
-        if (res){
-            log.info("now your is leader");
-        }else {
-            log.warn("election fail");
-            getLeader(client);
+    /**
+     * 选主
+     * @param data
+     * @throws Exception
+     */
+    static void electionMaster(byte[] data) throws Exception {
+        boolean res = createLocalPath(data);
+        if (res) {
+            log.info("now you are leader");
+        } else {
+            log.warn("now you are follower,  leader was: {}", new String(getLeader()));
             client.getData()
+                    // 每次选举失败，重新注册节点监听事件
                     .usingWatcher((CuratorWatcher) event -> {
-                        log.info("leader node was change, will be start election");
-                        electionMaster(client, data);})
+                        log.info("leader node was changed, will start election");
+                        electionMaster(data);
+                    })
                     .forPath(LOCKNODE);
         }
     }
 
-    public static byte[] getLeader(CuratorFramework client){
+    /**
+     * 获取数据
+     * @return
+     */
+    private static byte[] getLeader() {
         try {
             return client.getData().forPath(LOCKNODE);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("get leader error: {}",e.getMessage());
         }
-        return new byte[0];
+        return "no leader".getBytes();
     }
 
 }

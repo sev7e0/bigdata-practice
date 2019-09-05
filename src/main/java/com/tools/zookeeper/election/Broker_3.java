@@ -9,17 +9,13 @@ import java.util.concurrent.CountDownLatch;
 public class Broker_3 {
     private static final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private static final String name = "Broker_3";
-    public static void main(String[] args) throws InterruptedException {
-        CuratorFramework connect = ZkElectionUtil.getConnect();
 
+    public static void main(String[] args) throws InterruptedException {
         try {
-            ZkElectionUtil.electionMaster(connect, name.getBytes());
+            ZkElectionUtil.electionMaster(name.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        log.info("now leader is {}",new String(ZkElectionUtil.getLeader(connect)));
-
         shutdownLatch.await();
     }
 }
