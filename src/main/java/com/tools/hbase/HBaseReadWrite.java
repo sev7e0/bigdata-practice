@@ -18,7 +18,7 @@ public class HBaseReadWrite {
         HBaseReadWrite readWrite = new HBaseReadWrite();
         readWrite.init();
         readWrite.creatTable();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             long stamp = System.currentTimeMillis();
             String data = "data_"+stamp;
             readWrite.insert(HBaseTestUtil.getTableName(), String.valueOf(stamp), HBaseTestUtil.getFamilyName(), "data_stamp".getBytes(), data);
