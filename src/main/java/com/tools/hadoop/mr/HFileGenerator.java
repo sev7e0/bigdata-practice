@@ -1,85 +1,87 @@
 package com.tools.hadoop.mr;
 
+import com.tools.hbase.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.HRegionLocator;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.mapreduce.HFileOutputFormat2;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.UUID;
+
+/**
+ * bulk load like a ETL
+ *  - Extract: from text file or another database into HDFS
+ *  - Transform: data into HFile(HBase's own file format)
+ *  - Load: load the HFile into HBase and tell region server where to find them
+ */
 
 @Slf4j
 public class HFileGenerator {
 
     public static void main(String[] args) {
-        Configuration configuration = new Configuration();
-        configuration.addResource(new Path(""));
-        configuration.set("hbase.fs.tmp.dir", "partition_" + UUID.randomUUID());
-        String tableName = "demo";
-        String input = "";
-        String output = "";
+        if (args.length < 4) {
+            System.err.println("Usage：hadoop jar HFileGenerator.jar inputPath outputPath tableName configPath");
+            System.exit(0);
+        }
+        Job job = createJob(args[0], args[1], args[2], args[3]);
+        if (Objects.isNull(job)) {
+            log.error("error in create job!");
+        }
+        try {
+            if (job.waitForCompletion(true)){
+                log.info("execute job finish!");
+                Utils.doBulkLoad(job.getConfiguration(),args[1],args[2]);
+            }else {
+                log.error("execute job failed!!");
+            }
+        } catch (IOException | InterruptedException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    public static Job createJob(String inputPath, String outputPath, String tableName, String configPath) {
+        Configuration configuration = new Configuration();
+        configuration.addResource(new Path(configPath));
+        configuration.set("hbase.fs.tmp.dir", "partition_" + UUID.randomUUID());
+        Job job = null;
         try {
             try {
-                FileSystem fileSystem = FileSystem.get(URI.create(output), configuration);
-                fileSystem.delete(new Path(output), true);
+                FileSystem fileSystem = FileSystem.get(URI.create(outputPath), configuration);
+                fileSystem.delete(new Path(outputPath), true);
                 fileSystem.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             Connection connection = ConnectionFactory.createConnection(configuration);
             Table table = connection.getTable(TableName.valueOf(tableName));
-            Job job = Job.getInstance(configuration);
-            job.setJobName("gen hfile");
+            job = Job.getInstance(configuration);
+            job.setJobName("HFileGenerator Job");
 
             job.setJarByClass(HFileGenerator.class);
             job.setOutputFormatClass(TextOutputFormat.class);
             job.setMapperClass(HFileImportMapper.class);
-            FileInputFormat.setInputPaths(new JobConf(configuration), input);
-            FileOutputFormat.setOutputPath(new JobConf(configuration), new Path(output));
+            FileInputFormat.setInputPaths(new JobConf(configuration), inputPath);
+            FileOutputFormat.setOutputPath(new JobConf(configuration), new Path(outputPath));
 
-            HFileOutputFormat2.configureIncrementalLoad(job, table, new HRegionLocator(TableName.valueOf(tableName), null));
-            job.waitForCompletion(true);
+            HFileOutputFormat2.configureIncrementalLoad(job, table, connection.getRegionLocator(TableName.valueOf(tableName)));
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
-
-    }
-
-    static class HFileImportMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, KeyValue> {
-
-        protected final String CF_KQ = "cf";
-
-        @Override
-        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            String line = value.toString();
-            log.info("read line: {}", line);
-            String[] strings = line.split(" ");
-            String row = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_" + strings[1];
-            ImmutableBytesWritable writable = new ImmutableBytesWritable(Bytes.toBytes(row));
-            KeyValue keyValue = new KeyValue(Bytes.toBytes(row), this.CF_KQ.getBytes(), strings[1].getBytes(), strings[2].getBytes());
-            context.write(writable, keyValue);
-        }
+        return job;
     }
 
 }
