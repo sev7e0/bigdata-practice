@@ -1,5 +1,8 @@
 ### Hadoop Practice
 
+- [hadoop集群部署](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hadoop/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3.md)
+- [MapReduce](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hadoop/mr)
+
 ### HBase Practice
 - [HBase读写操作](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hbase)
 - [HBase过滤器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hbase/HBaseFilter.java)
@@ -11,6 +14,8 @@
 - [Kafka 消费者多线程消费](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/kafka/consumer/ConsumerThread.java)
 
 ### Click House
+
+- [docker部署文档](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/clickhouse/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.md)
 
 ### Redis Practice
 
