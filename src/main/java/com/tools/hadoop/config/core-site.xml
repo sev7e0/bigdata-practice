@@ -1,0 +1,35 @@
+<configuration>
+    <!--需要和hdfs-site.xml中的保持一致-->
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://ns1</value>
+    </property>
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/hadoopadmin/datadir/hadoop/tempDatas</value>
+    </property>
+    <!--  缓冲区大小，实际工作中根据服务器性能动态调整 -->
+    <property>
+        <name>io.file.buffer.size</name>
+        <value>4096</value>
+    </property>
+    <property>
+        <name>fs.trash.interval</name>
+        <value>10080</value>
+        <description>检查点被删除后的分钟数。 如果为零，垃圾桶功能将被禁用。 
+        该选项可以在服务器和客户端上配置。 如果垃圾箱被禁用服务器端，则检查客户端配置。 
+        如果在服务器端启用垃圾箱，则会使用服务器上配置的值，并忽略客户端配置值。</description>
+    </property>
+    <!--zookeeper配置-->
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>node01:2181,node02:2181,node03:2181</value>
+    </property>
+    <property>
+        <name>fs.trash.checkpoint.interval</name>
+        <value>0</value>
+        <description>垃圾检查点之间的分钟数。 应该小于或等于fs.trash.interval。 
+        如果为零，则将该值设置为fs.trash.interval的值。 每次检查指针运行时，
+        它都会从当前创建一个新的检查点，并删除比fs.trash.interval更早创建的检查点。</description>
+    </property>
+</configuration>

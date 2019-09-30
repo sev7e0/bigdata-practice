@@ -1,0 +1,19 @@
+<!--指定运行mapreduce的环境是yarn -->
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>mapreduce.job.ubertask.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>node01:10020</value>
+    </property>
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>node01:19888</value>
+    </property>
+</configuration>
