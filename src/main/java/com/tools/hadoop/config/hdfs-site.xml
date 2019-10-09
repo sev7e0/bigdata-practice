@@ -72,40 +72,40 @@
 	</property>
 	<!-- 指定NameNode的元数据在JournalNode上的存放位置 -->
 	<property>
-			<name>dfs.namenode.shared.edits.dir</name>
-			<value>qjournal://node01:8485;node02:8485;node03:8485/ns1</value>
+		<name>dfs.namenode.shared.edits.dir</name>
+		<value>qjournal://node01:8485;node02:8485;node03:8485/ns1</value>
 	</property>
 	<!-- 指定JournalNode在本地磁盘存放数据的位置 -->
 	<property>
-			<name>dfs.journalnode.edits.dir</name>
-			<value>/hadoopadmin/datadir/hadoop/journal</value>
+		<name>dfs.journalnode.edits.dir</name>
+		<value>/hadoopadmin/datadir/hadoop/journal</value>
 	</property>
 	<!-- 开启NameNode失败自动切换 -->
 	<property>
-			<name>dfs.ha.automatic-failover.enabled</name>
-			<value>true</value>
+		<name>dfs.ha.automatic-failover.enabled</name>
+		<value>true</value>
 	</property>
 	<!-- 配置失败自动切换实现方式 -->
 	<property>
-			<name>dfs.client.failover.proxy.provider.ns1</name>
-			<value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+		<name>dfs.client.failover.proxy.provider.ns1</name>
+		<value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
 	</property>
 	<!-- 配置隔离机制方法，多个机制用换行分割，即每个机制暂用一行-->
 	<property>
-			<name>dfs.ha.fencing.methods</name>
-			<value>
-					sshfence
-					shell(/bin/true)
-			</value>
+		<name>dfs.ha.fencing.methods</name>
+		<value>
+				sshfence
+				shell(/bin/true)
+		</value>
 	</property>
 	<!-- 使用sshfence隔离机制时需要ssh免登陆 -->
 	<property>
-			<name>dfs.ha.fencing.ssh.private-key-files</name>
-			<value>/home/hadoopadmin/.ssh/id_rsa</value>
+		<name>dfs.ha.fencing.ssh.private-key-files</name>
+		<value>/home/hadoopadmin/.ssh/id_rsa</value>
 	</property>
 	<!-- 配置sshfence隔离机制超时时间 -->
 	<property>
-			<name>dfs.ha.fencing.ssh.connect-timeout</name>
-			<value>30000</value>
+		<name>dfs.ha.fencing.ssh.connect-timeout</name>
+		<value>30000</value>
 	</property>
 </configuration>

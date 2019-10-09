@@ -1,6 +1,7 @@
 ### Hadoop Practice
 
 - [hadoop集群部署](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hadoop/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E6%96%87%E6%A1%A3.md)
+- [HDFS](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hadoop/hdfs)
 - [MapReduce](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hadoop/mr)
 
 ### HBase Practice
