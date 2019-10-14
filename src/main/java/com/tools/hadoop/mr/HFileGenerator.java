@@ -23,9 +23,9 @@ import java.util.UUID;
 
 /**
  * bulk load like a ETL
- *  - Extract: from text file or another database into HDFS
- *  - Transform: data into HFile(HBase's own file format)
- *  - Load: load the HFile into HBase and tell region server where to find them
+ * - Extract: from text file or another database into HDFS
+ * - Transform: data into HFile(HBase's own file format)
+ * - Load: load the HFile into HBase and tell region server where to find them
  */
 
 @Slf4j
@@ -41,10 +41,10 @@ public class HFileGenerator {
             log.error("error in create job!");
         }
         try {
-            if (job.waitForCompletion(true)){
+            if (job.waitForCompletion(true)) {
                 log.info("execute job finish!");
-                Utils.doBulkLoad(job.getConfiguration(),args[1],args[2]);
-            }else {
+                Utils.doBulkLoad(job.getConfiguration(), args[1], args[2]);
+            } else {
                 log.error("execute job failed!!");
             }
         } catch (IOException | InterruptedException | ClassNotFoundException e) {
