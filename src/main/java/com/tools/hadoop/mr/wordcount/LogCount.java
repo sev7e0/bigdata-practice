@@ -9,19 +9,12 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class WordCount {
-    /**
-     * @Title: main @Description: 定义的driver：封装了mapreduce作业的所有信息 @param @param
-     * args @param @throws Exception @return void @throws
-     */
+public class LogCount {
+
     public static void main(String[] args) throws Exception {
 
-        // 设置环境变量HADOOP_USER_NAME，其值是root
-        // 在本机调试
         // 读取配置文件
         Configuration conf = new Configuration();
-//		conf.set("fs.defaultFS", "hdfs://spark01:9000");
-//		conf.set("yarn.resourcemanager.hostname", "spark01");
 
         Path out = new Path(args[1]);
         FileSystem fs = FileSystem.get(conf);
@@ -33,20 +26,18 @@ public class WordCount {
         }
 
         // 创建任务
-        Job job = Job.getInstance(conf, "wordcountDemo");
+        Job job = Job.getInstance(conf, LogCount.class.getName());
         // 设置job的主类
-        job.setJarByClass(WordCount.class); // 主类
+        job.setJarByClass(LogCount.class); // 主类
 
         // 设置作业的输入路径
         FileInputFormat.setInputPaths(job, new Path(args[0]));
 
         //设置map的相关参数
-        job.setMapperClass(WordCountMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(LongWritable.class);
+        job.setMapperClass(LogCountMapper.class);
 
         //设置reduce相关参数
-        job.setReducerClass(WordCountReduce.class);
+        job.setReducerClass(LogCountReduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 

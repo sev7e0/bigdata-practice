@@ -1,11 +1,10 @@
 package com.tools.java;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Title:sparklearn
@@ -35,10 +34,23 @@ public class OptionalTest {
         Integer a = null;
         Integer b = null;
 
-        Optional<Integer> a1 = Optional.ofNullable(a);
-        Optional<Integer> b1 = Optional.ofNullable(b);
+        String dt = null;
+        Date date = null;
 
-        sum(a1, b1);
+        String s1 = Optional.ofNullable(dt).orElse("yyyy-MM-dd");
+        AtomicReference<String> format1 = null;
+        Optional.ofNullable(args[0]).ifPresent(ss -> {
+            SimpleDateFormat format = new SimpleDateFormat(s1);
+            format1.set(format.format(ss));
+        });
+        // 解析日期
+        String dateText = "20190304";
+        LocalDate nowDate = LocalDate.parse(dateText, DateTimeFormatter.BASIC_ISO_DATE);
+        System.out.println("解析之后的日期：" + nowDate);
+
+        // 格式化日期
+        String formatTextDate = nowDate.format(DateTimeFormatter.ISO_DATE);
+        System.out.println("格式化之后的日期：" + formatTextDate);
 
         String str = "this is a wordcount test ha ha ha ";
         wordCount(str);

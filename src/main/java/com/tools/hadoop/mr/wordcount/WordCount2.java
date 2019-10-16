@@ -8,6 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import sun.rmi.runtime.Log;
 
 public class WordCount2 {
     /**
@@ -41,9 +42,8 @@ public class WordCount2 {
         FileInputFormat.setInputPaths(job, new Path(args[0]));
 
         //设置map的相关参数
-        job.setMapperClass(WordCountMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(LongWritable.class);
+        job.setMapperClass(LogCountMapper.class);
+
 
         //设置reduce相关参数
         job.setReducerClass(WordCountReduce.class);

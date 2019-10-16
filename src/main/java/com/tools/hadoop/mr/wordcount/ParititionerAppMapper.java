@@ -20,8 +20,9 @@ public class ParititionerAppMapper extends Mapper<LongWritable, Text, Text, Long
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
         //按行读取文件
         String line = value.toString();
+        // 20111230115903	262c9791427904631304a5eea4484bd5	音乐	4	1	http://mp3.baidu.com/
         String[] words = line.split(" ");
-        // 通过上下文将结果输出
-        context.write(new Text(words[0]), new LongWritable(Long.parseLong(words[1])));
+        // 通过上下文将结果输出 userid 262c9791427904631304a5eea4484bd5
+        context.write(new Text(words[1]), new LongWritable(Long.parseLong(words[1])));
     }
 }
