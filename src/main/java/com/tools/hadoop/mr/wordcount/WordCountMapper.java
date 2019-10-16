@@ -12,7 +12,7 @@ import java.io.IOException;
  * @Description:使用mapreduce开发wordcount程序
  * @date 2018年8月22日 下午11:15:54
  */
-public class ParititionerAppMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
+public class WordCountMapper extends Mapper<LongWritable, Text, Text, LongWritable> {
     /**
      * 读取输入文件
      */

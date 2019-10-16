@@ -6,7 +6,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
 
-public class LogCountReduce extends Reducer<Text, LongWritable, Text, LongWritable> {
+public class LogCountReducer extends Reducer<Text, LongWritable, Text, LongWritable> {
     /**
      *
      */

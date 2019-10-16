@@ -8,9 +8,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import sun.rmi.runtime.Log;
 
-public class WordCount2 {
+public class WordCountByPartitioner {
     /**
      * @Title: main @Description: 定义的driver：封装了mapreduce作业的所有信息 @param @param
      * args @param @throws Exception @return void @throws
@@ -21,8 +20,8 @@ public class WordCount2 {
         // 在本机调试
         // 读取配置文件
         Configuration conf = new Configuration();
-//		conf.set("fs.defaultFS", "hdfs://spark01:9000");
-//		conf.set("yarn.resourcemanager.hostname", "spark01");
+		conf.set("fs.defaultFS", "hdfs://spark01:9000");
+		conf.set("yarn.resourcemanager.hostname", "spark01");
 
         Path out = new Path(args[1]);
         FileSystem fs = FileSystem.get(conf);
@@ -34,19 +33,18 @@ public class WordCount2 {
         }
 
         // 创建任务
-        Job job = Job.getInstance(conf, "wordcountDemo");
+        Job job = Job.getInstance(conf, WordCountByPartitioner.class.getName());
         // 设置job的主类
-        job.setJarByClass(WordCount2.class); // 主类
+        job.setJarByClass(WordCountByPartitioner.class); // 主类
 
         // 设置作业的输入路径
         FileInputFormat.setInputPaths(job, new Path(args[0]));
 
         //设置map的相关参数
-        job.setMapperClass(LogCountMapper.class);
-
+        job.setMapperClass(WordCountMapper.class);
 
         //设置reduce相关参数
-        job.setReducerClass(WordCountReduce.class);
+        job.setReducerClass(WordCountReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 

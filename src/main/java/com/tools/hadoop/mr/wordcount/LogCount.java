@@ -37,7 +37,7 @@ public class LogCount {
         job.setMapperClass(LogCountMapper.class);
 
         //设置reduce相关参数
-        job.setReducerClass(LogCountReduce.class);
+        job.setReducerClass(LogCountReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
