@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sev7e0</groupId>
     <artifactId>bigdata-practice</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0</version>
     <build>
         <plugins>
             <plugin>
@@ -125,12 +125,12 @@
             <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
         </dependency>
-        <!--click house-->
-        <dependency>
-            <groupId>ru.yandex.clickhouse</groupId>
-            <artifactId>clickhouse-jdbc</artifactId>
-            <version>0.1.54</version>
-        </dependency>
+<!--        &lt;!&ndash;click house&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>ru.yandex.clickhouse</groupId>-->
+<!--            <artifactId>clickhouse-jdbc</artifactId>-->
+<!--            <version>0.1.54</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.slf4j</groupId>

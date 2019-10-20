@@ -23,6 +23,18 @@ public class WordCountByPartitioner {
 		conf.set("fs.defaultFS", "hdfs://spark01:9000");
 		conf.set("yarn.resourcemanager.hostname", "spark01");
 
+
+        /**
+         * MR压缩相关
+         * 在mr中为了减少磁盘和网络io同时可以开启压缩
+         */
+        //map端压缩
+        conf.set("mapreduce.map.output.compress", "true");
+        conf.set("mapreduce.map.output.compress.codec", "org.apache.hadoop.io.compress.BZip2Codec");
+        //输出端压缩
+        conf.set("mapreduce.output.fileoutputformat.compress", "true");
+        conf.set("mapreduce.output.fileoutputformat.compress.codec", "org.apache.hadoop.io.compress.BZip2Codec");
+
         Path out = new Path(args[1]);
         FileSystem fs = FileSystem.get(conf);
 
@@ -43,15 +55,28 @@ public class WordCountByPartitioner {
         //设置map的相关参数
         job.setMapperClass(WordCountMapper.class);
 
+
+        /**
+         * 需要注意的事Combiner就是Reducer，他相当于在map端进行的一个reducer，以便于减少网络io
+         * - 使用combine时，首先考虑当前MR是否适合combine
+         * - 总原则是不论使不使用combine不能影响最终的结果
+         * - 在MR时，发生数据倾斜，且可以使用combine时，可以使用combine缓解数据倾斜
+         */
+        job.setCombinerClass(WordCountReducer.class);
+
         //设置reduce相关参数
         job.setReducerClass(WordCountReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
+        // 设置自定义partitioner
+        job.setPartitionerClass(MyPartitioner.class);
+
         //设置作业的输出路径
         FileOutputFormat.setOutputPath(job, out);
 
-        job.setNumReduceTasks(2);
+        //设置reduce为4 否则partitioner不会生效
+        job.setNumReduceTasks(4);
 
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
