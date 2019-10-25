@@ -29,7 +29,7 @@ public class ZkElectionUtil {
      * @param data
      * @return
      */
-    private static boolean createLocalPath(byte[] data) {
+    private static boolean getLock(byte[] data) {
         try {
             Stat stat = client.checkExists().forPath(LOCKNODE);
             if (Objects.isNull(stat)) {
@@ -53,8 +53,7 @@ public class ZkElectionUtil {
      * @throws Exception
      */
     static void electionMaster(byte[] data) throws Exception {
-        boolean res = createLocalPath(data);
-        if (res) {
+        if (getLock(data)) {
             log.info("now you are leader");
         } else {
             log.warn("now you are follower,  leader was: {}", new String(getLeader()));

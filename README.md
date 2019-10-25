@@ -29,4 +29,5 @@
 ### Zookeeper Practice
 
 - [基于zookeeper的服务注册与发现](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/zookeeper/discovery)
-- [使用zookeeper实现leader选举](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/zookeeper/election)
+- [基于zookeeper实现leader选举](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/zookeeper/election)
+- [zookeeper的leader选举机制](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/zookeeper/zookeeper选举机制.pdf)
