@@ -6,8 +6,8 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.data.Stat;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -29,10 +29,9 @@ public class ZkElectionUtil {
      * @param data
      * @return
      */
-    private static boolean getLock(byte[] data) {
+    private boolean getLock(byte[] data) {
         try {
-            Stat stat = client.checkExists().forPath(LOCKNODE);
-            if (Objects.isNull(stat)) {
+            if (Objects.isNull(client.checkExists().forPath(LOCKNODE))) {
                 client.create()
                         .creatingParentContainersIfNeeded()
                         .withMode(CreateMode.EPHEMERAL)
@@ -52,15 +51,17 @@ public class ZkElectionUtil {
      * @param data
      * @throws Exception
      */
-    static void electionMaster(byte[] data) throws Exception {
+    void electionMaster(byte[] data) throws Exception {
+        //尝试创建zk临时节点
         if (getLock(data)) {
             log.info("now you are leader");
         } else {
-            log.warn("now you are follower,  leader was: {}", new String(getLeader()));
+            log.warn("now you are follower,  leader was: {}", getLeader());
             client.getData()
                     // 每次选举失败，重新注册节点监听事件
                     .usingWatcher((CuratorWatcher) event -> {
                         log.info("leader node was changed, will start election");
+                        // 递归调用
                         electionMaster(data);
                     })
                     .forPath(LOCKNODE);
@@ -68,16 +69,16 @@ public class ZkElectionUtil {
     }
 
     /**
-     * 获取数据
+     * 获取创建成功的数据
      * @return
      */
-    private static byte[] getLeader() {
+    private String getLeader() {
         try {
-            return client.getData().forPath(LOCKNODE);
+            return Arrays.toString(client.getData().forPath(LOCKNODE));
         } catch (Exception e) {
             log.error("get leader error: {}",e.getMessage());
         }
-        return "no leader".getBytes();
+        return "no leader";
     }
 
 }

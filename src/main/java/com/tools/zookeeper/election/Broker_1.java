@@ -11,8 +11,9 @@ public class Broker_1 {
     private static final String name = "Broker_1";
 
     public static void main(String[] args) throws InterruptedException {
+        ZkElectionUtil electionUtil = new ZkElectionUtil();
         try {
-            ZkElectionUtil.electionMaster(name.getBytes());
+            electionUtil.electionMaster(name.getBytes());
         } catch (Exception e) {
             e.printStackTrace();
         }
