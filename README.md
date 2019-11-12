@@ -7,6 +7,11 @@
 ### HBase Practice
 - [HBase读写操作](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hbase)
 - [HBase过滤器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hbase/HBaseFilter.java)
+
+### Hive Practice
+
+
+
 ### Kafka Practice
 
 - [生产者/消费者QuickStart](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/kafka)

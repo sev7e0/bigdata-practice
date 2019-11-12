@@ -1,5 +1,6 @@
 package com.tools.hbase;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
@@ -10,6 +11,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
+@Slf4j
 public class HBaseReadWrite {
 
     private Connection connection = null;
@@ -18,13 +20,14 @@ public class HBaseReadWrite {
         HBaseReadWrite readWrite = new HBaseReadWrite();
         readWrite.init();
         readWrite.creatTable();
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 10000; i++) {
             long stamp = System.currentTimeMillis();
             String data = "data_"+stamp;
-            readWrite.insert(HBaseTestUtil.getTableName(), String.valueOf(stamp), HBaseTestUtil.getFamilyName(), "data_stamp".getBytes(), data);
+            System.out.println("insert data :"+data+"");
+            readWrite.insert(HBaseTestUtil.getTableName(null), String.valueOf(stamp), HBaseTestUtil.getFamilyName(null), "data_stamp".getBytes(), data);
         }
 
-        readWrite.scan(HBaseTestUtil.getTableName(), HBaseTestUtil.getFamilyName(), "data_stamp");
+        readWrite.scan(HBaseTestUtil.getTableName(null), HBaseTestUtil.getFamilyName(null), "data_stamp");
     }
 
     /**
@@ -34,7 +37,7 @@ public class HBaseReadWrite {
      */
     private void init() throws IOException {
         Configuration configuration = HBaseConfiguration.create();
-        configuration.set("hbase.zookeeper.quorum", "localhost");
+        configuration.set("hbase.zookeeper.quorum", "spark01");
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
         connection = ConnectionFactory.createConnection(configuration);
     }
@@ -46,14 +49,14 @@ public class HBaseReadWrite {
      */
     private void creatTable() throws IOException {
         Admin admin = connection.getAdmin();
-        TableName tableName = TableName.valueOf(HBaseTestUtil.getTableName());
+        TableName tableName = TableName.valueOf(HBaseTestUtil.getTableName(null));
         if (admin.tableExists(tableName)) {
             // hbase 在删除表之前要先 disable
             admin.disableTable(tableName);
             admin.deleteTable(tableName);
         }
         HTableDescriptor descriptor = new HTableDescriptor(tableName);
-        descriptor.addFamily(new HColumnDescriptor(HBaseTestUtil.getFamilyName()));
+        descriptor.addFamily(new HColumnDescriptor(HBaseTestUtil.getFamilyName(null)));
         admin.createTable(descriptor);
     }
 

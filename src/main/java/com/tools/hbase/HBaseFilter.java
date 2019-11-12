@@ -21,7 +21,7 @@ public class HBaseFilter {
     private static Connection connection;
     static {
         Configuration configuration = new Configuration();
-        configuration.set("hbase.zookeeper.quorum", "localhost");
+        configuration.set("hbase.zookeeper.quorum", "spark01");
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
         try {
             connection = ConnectionFactory.createConnection(configuration);
@@ -31,13 +31,13 @@ public class HBaseFilter {
     }
 
     public static void main(String[] args) throws IOException {
-        Table table = connection.getTable(TableName.valueOf(HBaseTestUtil.getTableName()));
+        Table table = connection.getTable(TableName.valueOf(HBaseTestUtil.getTableName("table_20191108")));
 
         // rowId前缀过滤
         log.warn("PrefixFilter");
         Filter pf = new PrefixFilter(Bytes.toBytes("1"));
         Scan scan00 = new Scan().setFilter(pf);
-        table.getScanner(scan00).forEach(res-> log.info(Bytes.toString(res.getValue(HBaseTestUtil.getFamilyName(), "data_stamp".getBytes()))));
+        table.getScanner(scan00).forEach(res-> log.info(Bytes.toString(res.getValue(HBaseTestUtil.getFamilyName(null), "data_stamp".getBytes()))));
 
         //随机百分比过滤
         log.warn("RandomRowFilter");

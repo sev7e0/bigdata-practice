@@ -34,6 +34,7 @@
         <lettuce.version>5.1.6.RELEASE</lettuce.version>
         <slf4j.version>1.7.20</slf4j.version>
         <pulsar.version>2.3.2</pulsar.version>
+        <hive.version>2.1.1</hive.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,23 @@
             </exclusions>
         </dependency>
 
+        <!--hive-->
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-cli</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
+
         <!--zookeeper依赖-->
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
@@ -125,12 +143,6 @@
             <artifactId>lettuce-core</artifactId>
             <version>${lettuce.version}</version>
         </dependency>
-<!--        &lt;!&ndash;click house&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>ru.yandex.clickhouse</groupId>-->
-<!--            <artifactId>clickhouse-jdbc</artifactId>-->
-<!--            <version>0.1.54</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -151,6 +163,11 @@
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client</artifactId>
             <version>${pulsar.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.33</version>
         </dependency>
     </dependencies>
 </project>
