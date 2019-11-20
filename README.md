@@ -7,6 +7,7 @@
 ### HBase Practice
 - [HBase读写操作](https://github.com/sev7e0/bigdata-practice/tree/master/src/main/java/com/tools/hbase)
 - [HBase过滤器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hbase/HBaseFilter.java)
+- [HBase协处理器](https://github.com/sev7e0/bigdata-practice/blob/master/src/main/java/com/tools/hbase/processor/HBaseProcessor.java)
 
 ### Hive Practice
 
