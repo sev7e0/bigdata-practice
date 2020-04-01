@@ -37,8 +37,7 @@ public class HBaseReadWrite {
      */
     private void init() throws IOException {
         Configuration configuration = HBaseConfiguration.create();
-        configuration.set("hbase.zookeeper.quorum", "spark01");
-        configuration.set("hbase.zookeeper.property.clientPort", "2181");
+
         connection = ConnectionFactory.createConnection(configuration);
     }
 

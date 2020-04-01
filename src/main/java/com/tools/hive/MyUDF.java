@@ -4,12 +4,16 @@ package com.tools.hive;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.hadoop.hive.ql.exec.Description;
 import org.apache.hadoop.hive.ql.exec.UDF;
+import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
+import org.apache.hadoop.hive.ql.metadata.HiveException;
+import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.io.Text;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-public class MyUDF extends UDF {
+public class MyUDF extends GenericUDF {
 
     @Description(
             name="用户自定义函数",
@@ -30,4 +34,18 @@ public class MyUDF extends UDF {
         System.out.println(movie.toString());
     }
 
+    @Override
+    public ObjectInspector initialize(ObjectInspector[] arguments) throws UDFArgumentException {
+        return null;
+    }
+
+    @Override
+    public Object evaluate(DeferredObject[] arguments) throws HiveException {
+        return null;
+    }
+
+    @Override
+    public String getDisplayString(String[] children) {
+        return null;
+    }
 }

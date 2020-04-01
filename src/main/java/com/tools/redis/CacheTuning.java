@@ -33,7 +33,7 @@ public class CacheTuning {
 //        }
         System.out.println(safeUpdateCache("3"));
 
-        bloomFilter();
+//        bloomFilter();
     }
 
     /**
@@ -46,22 +46,22 @@ public class CacheTuning {
      * 从而避免了对底层存储系统的查询压力。另外也有一个更为简单粗暴的方法（我们采用的就是这种），如果一个查询返回的数据为空（不管是数 据不存在，还是系统故障），
      * 我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。
      */
-    private static void bloomFilter() {
-        int size = 1000000;
-        BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size);
-
-        for (int i = 0; i < size; i++) {
-            bloomFilter.put(i);
-        }
-
-        LocalTime before = LocalTime.now();
-        if (bloomFilter.mightContain(200099)) {
-            System.out.println("mightContain");
-        }
-        LocalTime now = LocalTime.now();
-        System.out.println(Duration.between(before, now).getNano());
-
-    }
+//    private static void bloomFilter() {
+//        int size = 1000000;
+//        BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size);
+//
+//        for (int i = 0; i < size; i++) {
+//            bloomFilter.put(i);
+//        }
+//
+//        LocalTime before = LocalTime.now();
+//        if (bloomFilter.mightContain(200099)) {
+//            System.out.println("mightContain");
+//        }
+//        LocalTime now = LocalTime.now();
+//        System.out.println(Duration.between(before, now).getNano());
+//
+//    }
 
 
     /**

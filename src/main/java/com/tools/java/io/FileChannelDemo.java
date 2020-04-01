@@ -1,6 +1,5 @@
 package com.tools.java.io;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -10,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 主要用来测试随机写和顺序写的性能。
@@ -29,7 +29,7 @@ public class FileChannelDemo {
      */
     public static void unSynchronized() throws FileNotFoundException, InterruptedException {
         long start = System.currentTimeMillis();
-        FileChannel fileChannel = new RandomAccessFile(new File("db.data"), "rw").getChannel();
+        FileChannel fileChannel = new RandomAccessFile("db.data", "rw").getChannel();
         ExecutorService executorService = Executors.newFixedThreadPool(64);
 
         AtomicLong atomicLong = new AtomicLong(0);
@@ -57,7 +57,8 @@ public class FileChannelDemo {
      */
     public static void useSynchronized() throws FileNotFoundException, InterruptedException {
         long start = System.currentTimeMillis();
-        FileChannel fileChannel = new RandomAccessFile(new File("db1.data"), "rw").getChannel();
+//        ReentrantLock reentrantLock = new ReentrantLock();
+        FileChannel fileChannel = new RandomAccessFile("db1.data", "rw").getChannel();
 
         ExecutorService executorService = Executors.newFixedThreadPool(64);
 
