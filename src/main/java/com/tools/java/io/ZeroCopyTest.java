@@ -43,11 +43,13 @@ public class ZeroCopyTest {
     public static void zeroCopy() throws IOException {
         long start = System.currentTimeMillis();
         LocalDateTime now = LocalDateTime.now();
-        FileChannel destChannel = new RandomAccessFile("target/" + now + ".data", "rw").getChannel();
-        FileChannel srcChannel = new RandomAccessFile("src-db.data", "rw").getChannel();
-        srcChannel.transferTo(0, srcChannel.size(), destChannel);
-        LOG.info("write to file: {}", now);
-        LOG.info("during time: {}", (System.currentTimeMillis() - start));
+        try (FileChannel destChannel = new RandomAccessFile("target/" + now + ".data", "rw").getChannel();
+			 FileChannel srcChannel = new RandomAccessFile("src-db.data", "rw").getChannel()){
+			srcChannel.transferTo(0, srcChannel.size(), destChannel);
+			LOG.info("write to file: {}", now);
+			LOG.info("during time: {}", (System.currentTimeMillis() - start));
+		}
+
     }
 
 	/**
@@ -56,11 +58,13 @@ public class ZeroCopyTest {
 	public static void unZeroCopy() throws IOException {
 		long start = System.currentTimeMillis();
 		LocalDateTime now = LocalDateTime.now();
-		FileOutputStream fileOutputStream = new FileOutputStream(new File("target/" + now + ".data"));
-		FileInputStream inputStream = new FileInputStream(new File("src-db.data"));
-        while (inputStream.read() != -1) {
-            fileOutputStream.write(inputStream.read());
-        }
+		try (FileOutputStream fileOutputStream = new FileOutputStream(new File("target/" + now + ".data"));
+			 FileInputStream inputStream = new FileInputStream(new File("src-db.data"))){
+			while (inputStream.read() != -1) {
+				fileOutputStream.write(inputStream.read());
+			}
+		}
+
         LOG.info("write to file: {}", now);
         LOG.info("during time：{}", (System.currentTimeMillis() - start));
 	}
