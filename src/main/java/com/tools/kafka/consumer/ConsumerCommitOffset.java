@@ -2,6 +2,7 @@ package com.tools.kafka.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -47,14 +48,15 @@ public class ConsumerCommitOffset {
             try {
                 while (true) {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                    records.forEach(record ->
-                            log.info(out,
-                                    record.topic(),
-                                    record.partition(),
-                                    record.offset(),
-                                    record.value()));
+                    //                            lo.info(out,
+                    //                                    record.topic(),
+                    //                                    record.partition(),
+                    //                                    record.offset(),
+                    //                                    record.value()));
                     //异步提交offset
-                    consumer.commitAsync();
+                    for (ConsumerRecord<String, String> record : records) {
+                        consumer.commitAsync();
+                    }
                 }
             } finally {
                 //使用同步提交，做最后的把关

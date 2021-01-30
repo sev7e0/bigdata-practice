@@ -1,13 +1,16 @@
 package com.tools.hadoop.mr.secondarysort;
 
-import com.tools.java.DateTimeUtils;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+
+import static java.time.LocalDateTime.parse;
 
 
 /**
@@ -21,7 +24,7 @@ public class MyOrderMapper extends Mapper<LongWritable, Text, OrderBean, DoubleW
         String[] values = Optional.ofNullable(value).map(v -> v.toString().split("\t")).get();
         String yearMonthString;
         try {
-            yearMonthString = DateTimeUtils.getYearMonthString(values[1], "yyyy-MM-dd HH:mm:ss.SSS");
+            yearMonthString = getYearMonthString(values[1], "yyyy-MM-dd HH:mm:ss.SSS");
         }catch (Exception e){
             return;
         }
@@ -40,6 +43,12 @@ public class MyOrderMapper extends Mapper<LongWritable, Text, OrderBean, DoubleW
         }
     }
 
-
+    public static String getYearMonthString(String dateTime, String pattern) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime localDateTime = parse(dateTime, formatter);
+        int year = localDateTime.getYear();
+        int month = localDateTime.getMonthValue();
+        return year + "" + month;
+    }
 
 }

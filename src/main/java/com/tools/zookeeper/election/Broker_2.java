@@ -1,7 +1,6 @@
 package com.tools.zookeeper.election;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.framework.CuratorFramework;
 
 import java.util.concurrent.CountDownLatch;
 

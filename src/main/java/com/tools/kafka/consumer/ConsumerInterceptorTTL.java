@@ -48,7 +48,7 @@ public class ConsumerInterceptorTTL implements ConsumerInterceptor<String, Strin
 
     @Override
     public void onCommit(Map<TopicPartition, OffsetAndMetadata> map) {
-        map.forEach((tp, offset) -> log.info("tp:{}--offset:{}", tp, offset.offset()));
+        map.forEach((tp, offset) -> System.out.println("tp:{"+tp+"}--offset:{"+offset.offset()+"}"));
     }
 
     @Override
