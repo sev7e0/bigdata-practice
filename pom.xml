@@ -34,7 +34,7 @@
         <lettuce.version>5.1.6.RELEASE</lettuce.version>
         <slf4j.version>1.7.22</slf4j.version>
         <log4j2.version>2.17.0</log4j2.version>
-        <pulsar.version>2.3.2</pulsar.version>
+        <pulsar.version>2.7.5</pulsar.version>
         <hive.version>3.1.2</hive.version>
     </properties>
 
